@@ -15,6 +15,7 @@ class Search {
 
 class AltSearch extends Search {
     constructor (search1, search2) {
+        super()
         this.search1 = search1
         this.search2 = search2
     }
@@ -29,6 +30,7 @@ class AltSearch extends Search {
 
 class CacheSearch extends Search {
     constructor (search) {
+        super()
         this.cache = new Map()
         this.search = search
     }
