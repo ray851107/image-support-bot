@@ -5,7 +5,7 @@ const config = require('./config.json')
 
 const bot = new TelegramBot(config.bot.token, { polling: true })
 
-const search = customSearch.chain(imageSearch).cache()
+const search = customSearch.alt(imageSearch).cache()
 
 const parse = text => text.match(/\S+\.(jpg|png|bmp|gif)/gi) || []
 
