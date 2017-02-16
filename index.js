@@ -27,17 +27,18 @@ async function googleSearch (query) {
 function addCache (search) {
     const cache = new Map()
 
-    return query => {
+    return async (query) => {
         if (cache.has(query)) {
-            return cache.get(query)
+            return await cache.get(query)
         }
         const promise = search(query)
         cache.add(query, promise)
-        promise.catch(err => {
+        try {
+            return await promise
+        } catch (err) {
             cache.delete(query)
             throw err
-        })
-        return promise
+        }
     }
 }
 
@@ -47,13 +48,16 @@ const parse = text => text.match(/\S+\.(jpg|png|bmp|gif)/gi) || []
 
 bot.on('text', async ({chat, text}) => {
     const queries = parse(text)
-    Promise.all(queries.map(async (query) => {
-        const link = await search(query)
-        if (query.endsWith('.gif')) {
-            bot.sendDocument(chat.id, link)
-        } else {
-            bot.sendPhoto(chat.id, link)
-        }
-    }))
-    .catch(console.error)
+    try {
+        await Promise.all(queries.map(async (query) => {
+            const link = await search(query)
+            if (query.endsWith('.gif')) {
+                await bot.sendDocument(chat.id, link)
+            } else {
+                await bot.sendPhoto(chat.id, link)
+            }
+        }))
+    } catch (err) {
+        console.error(err)
+    }
 })
