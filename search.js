@@ -39,7 +39,7 @@ class CacheSearch extends Search {
             return await this.cache.get(query)
         }
         const promise = this.search.doSearch(query)
-        this.cache.add(query, promise)
+        this.cache.set(query, promise)
         try {
             return await promise
         } catch (err) {
