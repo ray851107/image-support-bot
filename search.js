@@ -18,9 +18,9 @@ class AltSearch extends Search {
     }
     async doSearch (query) {
         try {
-            return await search1.doSearch(query)
+            return await this.search1.doSearch(query)
         } catch (err) {
-            return await search2.doSearch(query)
+            return await this.search2.doSearch(query)
         }
     }
 }
