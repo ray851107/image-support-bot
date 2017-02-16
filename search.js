@@ -37,7 +37,7 @@ class PromiseCache {
         return await this.cache.get(query)
     }
     async set (query, promise) {
-        this.pending.add(query, promise)
+        this.pending.set(query, promise)
         try {
             const data = await promise
             this.pending.delete(query)
