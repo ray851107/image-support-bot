@@ -1,5 +1,5 @@
 const request = require('request-promise')
-const cheerio = require('cheerio')
+const htmlparser2 = require('htmlparser2')
 
 const config = require('./config')
 const {Search} = require('./search')
@@ -38,14 +38,45 @@ class GoogleImageSearch extends Search {
             hl: 'zh-TW',
             num: 1
         }
-        let html = await request('https://www.google.com/search', { headers, qs })
-        return this.parse(html)
+        const stream = request('https://www.google.com/search', { headers, qs, encoding: 'utf8' })
+        const json = await this.parse(stream)
+        return JSON.parse(json).ou
     }
-    parse (html) {
-        const $ = cheerio.load(html)
-        const json = $('.rg_meta').first().text()
-        const data = JSON.parse(json)
-        return data.ou
+    parse (stream) {
+        return new Promise((resolve, reject) => {
+            let parsing = false
+            let found = false
+            let result = ''
+
+            const parser = new htmlparser2.Parser({
+                onopentag (name, attributes) {
+                    if (found || attributes.class !== 'rg_meta') return
+                    parsing = true
+                    found = true
+                },
+                ontext (text) {
+                    if (parsing) {
+                        result += text
+                    }
+                },
+                onclosetag () {
+                    if (!parsing) return
+                    parsing = false
+                    resolve(result)
+                },
+                onend () {
+                    if (!found) reject(new Error('link not found'))
+                },
+                onerror: reject
+            })
+            stream.on('error', reject)
+            stream.on('data', data => {
+                if (!found || parsing) parser.write(data)
+            })
+            stream.on('end', () => {
+                parser.end()
+            })
+        })
     }
 }
 
