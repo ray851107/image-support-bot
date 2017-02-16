@@ -28,6 +28,7 @@ class AltSearch extends Search {
 class PromiseCache {
     constructor (cache) {
         this.pending = new Map()
+        this.cache = cache
     }
     async get (query) {
         if (this.pending.has(query)) {
