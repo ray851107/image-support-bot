@@ -1,6 +1,3 @@
-const request = require('request-promise')
-const config = require('./config.json')
-
 class Search {
     async doSearch (query) {
         throw Error('search method not provided')
@@ -49,29 +46,4 @@ class CacheSearch extends Search {
     }
 }
 
-class GoogleSearch extends Search {
-    async doSearch (query) {
-        const qs = Object.assign({
-            q: query,
-            fileType: query.endsWith('.gif') ? 'gif' : undefined
-        }, GoogleSearch.defaults, config.params)
-
-        const body = await request('https://www.googleapis.com/customsearch/v1', { qs, json: true })
-        
-        return body.items[0].link
-    }
-}
-
-GoogleSearch.defaults = {
-    key: config.cse.key,
-    cx: config.cse.cx,
-    searchType: 'image',
-    hl: 'zh-TW',
-    num: 1
-}
-
-const googleSearch = new GoogleSearch()
-
-const defaultSearch = googleSearch.cache()
-
-module.exports = { googleSearch, defaultSearch }
+module.exports = { Search }

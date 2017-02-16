@@ -1,9 +1,11 @@
 const TelegramBot = require('node-telegram-bot-api')
 
-const {defaultSearch} = require('./search')
+const {customSearch, imageSearch} = require('./search')
 const config = require('./config.json')
 
 const bot = new TelegramBot(config.bot.token, { polling: true })
+
+const search = customSearch.chain(imageSearch).cache()
 
 const parse = text => text.match(/\S+\.(jpg|png|bmp|gif)/gi) || []
 
@@ -11,7 +13,7 @@ bot.on('text', async ({chat, text}) => {
     const queries = parse(text)
     try {
         await Promise.all(queries.map(async (query) => {
-            const link = await defaultSearch.doSearch(query)
+            const link = await search.doSearch(query)
             if (query.endsWith('.gif')) {
                 await bot.sendDocument(chat.id, link)
             } else {
