@@ -33,6 +33,10 @@ function addCache (search) {
         }
         const promise = search(query)
         cache.add(query, promise)
+        promise.catch(err => {
+            cache.delete(query)
+            throw err
+        })
         return promise
     }
 }
