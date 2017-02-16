@@ -21,3 +21,16 @@ A Telegram bot which does google image search for your group.
 ```
 4. run `npm start` to start the bot.
 5. Add the bot to your group.
+
+If you want to add extra parameters to google api calls, specify them in the `params` field in `config.json`.
+
+For example,
+```json
+{
+  // api keys...
+
+  "params": {
+    "safe": "medium"
+  }
+}
+```

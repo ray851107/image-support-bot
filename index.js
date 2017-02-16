@@ -6,16 +6,19 @@ const config = require('./config.json')
 const bot = new TelegramBot(config.bot.token, { polling: true })
 
 async function googleSearch (query) {
-    const qs = {
+    const defaults = {
         key: config.cse.key,
         cx: config.cse.cx,
-        q: query,
-        fileType: query.endsWith('.gif') ? 'gif' : undefined,
         searchType: 'image',
         hl: 'zh-TW',
         num: 1
     }
-    
+
+    const qs = Object.assign({
+        q: query,
+        fileType: query.endsWith('.gif') ? 'gif' : undefined
+    }, defaults, config.params)
+
     const body = await request('https://www.googleapis.com/customsearch/v1', { qs, json: true })
     
     return body.items[0].link
