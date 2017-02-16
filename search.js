@@ -55,7 +55,7 @@ class CacheSearch extends Search {
         this.search = search
     }
     async doSearch (query) {
-        const data = await cache.get(query)
+        const data = await this.cache.get(query)
         if (data != null) return data
 
         const promise = this.search.doSearch(query)
