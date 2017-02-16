@@ -27,21 +27,18 @@ class PromiseCache {
         this.pending = new Map()
         this.cache = cache
     }
-    async get (query) {
-        if (this.pending.has(query)) {
-            return await this.pending.get(query)
-        }
-        return await this.cache.get(query)
+    get (query) {
+        return this.pending.has(query)
+            ? this.pending.get(query)
+            : this.cache.get(query)
     }
     async set (query, promise) {
         this.pending.set(query, promise)
         try {
             const data = await promise
-            this.pending.delete(query)
             return await this.cache.set(query, data)
-        } catch (err) {
+        } finally {
             this.pending.delete(query)
-            throw err
         }
     }
 }
