@@ -58,13 +58,14 @@ class GoogleSearch extends Search {
         
         return body.items[0].link
     }
-    static defaults = {
-        key: config.cse.key,
-        cx: config.cse.cx,
-        searchType: 'image',
-        hl: 'zh-TW',
-        num: 1
-    }
+}
+
+GoogleSearch.defaults = {
+    key: config.cse.key,
+    cx: config.cse.cx,
+    searchType: 'image',
+    hl: 'zh-TW',
+    num: 1
 }
 
 const googleSearch = new GoogleSearch()
