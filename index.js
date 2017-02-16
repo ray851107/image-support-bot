@@ -1,6 +1,6 @@
 const TelegramBot = require('node-telegram-bot-api')
 
-const {customSearch, imageSearch} = require('./search')
+const {customSearch, imageSearch} = require('./google')
 const config = require('./config.json')
 
 const bot = new TelegramBot(config.bot.token, { polling: true })
