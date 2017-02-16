@@ -71,7 +71,7 @@ class GoogleImageSearch extends Search {
             })
             stream.on('error', reject)
             stream.on('data', data => {
-                if (!found || parsing) parser.write(data)
+                parser.write(data)
             })
             stream.on('end', () => {
                 parser.end()
