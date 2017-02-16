@@ -42,6 +42,7 @@ const search = addCache(googleSearch)
 const parse = text => text.match(/\S+\.(jpg|png|bmp|gif)/gi) || []
 
 bot.on('text', async ({chat, text}) => {
+    const queries = parse(text)
     Promise.all(queries.map(async (query) => {
         const link = await search(query)
         if (query.endsWith('.gif')) {
