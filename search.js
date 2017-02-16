@@ -17,7 +17,7 @@ class AltSearch extends Search {
         this.search2 = search2
     }
     doSearch (query) {
-        this.search1.doSearch(query)
+        return this.search1.doSearch(query)
             .catch(() => this.search2.doSearch(query))
     }
 }
