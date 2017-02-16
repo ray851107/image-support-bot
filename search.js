@@ -5,8 +5,8 @@ class Search {
     alt (other) {
         return new AltSearch(this, other)
     }
-    cache () {
-        return new CacheSearch(this)
+    cache (cache) {
+        return new CacheSearch(this, cache)
     }
 }
 
@@ -25,24 +25,42 @@ class AltSearch extends Search {
     }
 }
 
+class PromiseCache {
+    constructor (cache) {
+        this.pending = new Map()
+    }
+    async get (query) {
+        if (this.pending.has(query)) {
+            return await this.pending.get(query)
+        }
+        return await this.cache.get(query)
+    }
+    async set (query, promise) {
+        this.pending.add(query, promise)
+        try {
+            const data = await promise
+            this.pending.delete(query)
+            return await this.cache.set(query, data)
+        } catch (err) {
+            this.pending.delete(query)
+            throw err
+        }
+    }
+}
+
 class CacheSearch extends Search {
-    constructor (search) {
+    constructor (search, cache) {
         super()
-        this.cache = new Map()
+        this.cache = new PromiseCache(cache)
         this.search = search
     }
     async doSearch (query) {
-        if (this.cache.has(query)) {
-            return await this.cache.get(query)
-        }
+        const data = await cache.get(query)
+        if (data != null) return data
+
         const promise = this.search.doSearch(query)
-        this.cache.set(query, promise)
-        try {
-            return await promise
-        } catch (err) {
-            this.cache.delete(query)
-            throw err
-       }
+        
+        return await this.cache.set(query, promise)
     }
 }
 

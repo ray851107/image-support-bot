@@ -1,11 +1,13 @@
 const TelegramBot = require('node-telegram-bot-api')
 
 const {customSearch, imageSearch} = require('./google')
+const {NedbCache} = require('./store')
+
 const config = require('./config.json')
 
 const bot = new TelegramBot(config.bot.token, { polling: true })
 
-const search = customSearch.alt(imageSearch).cache()
+const search = customSearch.alt(imageSearch).cache(new NedbCache())
 
 const parse = text => text.match(/\S+\.(jpg|png|bmp|gif)/gi) || []
 
