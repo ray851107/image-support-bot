@@ -1,4 +1,5 @@
 const TelegramBot = require('node-telegram-bot-api')
+const isUrl = require('is-url')
 
 const {customSearch, imageSearch} = require('./google')
 const {NedbCache} = require('./store')
@@ -12,7 +13,7 @@ const search = customSearch.alt(imageSearch).cache(new NedbCache())
 const parse = text => text.match(/\S+\.(jpg|png|bmp|gif)/gi) || []
 
 bot.on('text', async ({chat, text}) => {
-    const queries = parse(text)
+    const queries = parse(text).filter(match => !isUrl(match))
     try {
         await Promise.all(queries.map(async (query) => {
             const link = await search.doSearch(query)
