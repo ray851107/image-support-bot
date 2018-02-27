@@ -51,7 +51,7 @@ class GoogleImageSearch extends Search {
             const parser = new htmlparser2.Parser({
                 onopentag (name, attributes) {
                     if (found ||
-                            attributes.class != null ||
+                            attributes.class == null ||
                             !attributes.class.split(' ').includes('rg_meta'))
                         return
                     parsing = true
