@@ -19,20 +19,15 @@ const search = cacheSearch(async query => {
 
 const parse = text => text.match(/\S+\.(jpg|png|bmp|gif)/gi) || []
 
-bot.on('text', async ({ chat, text }) => {
+bot.on('text', ({ chat, text }) => {
     const queries = parse(text).filter(match => !isUrl(match))
-    try {
-        await Promise.all(
-            queries.map(async query => {
-                const link = await search(query)
-                if (query.endsWith('.gif')) {
-                    await bot.sendDocument(chat.id, link)
-                } else {
-                    await bot.sendPhoto(chat.id, link)
-                }
+    for (const query of queries) {
+        search(query)
+            .then(link => {
+                query.endsWith('.gif')
+                    ? bot.sendDocument(chat.id, link)
+                    : bot.sendPhoto(chat.id, link)
             })
-        )
-    } catch (err) {
-        console.error(err)
+            .catch(console.log)
     }
 })
