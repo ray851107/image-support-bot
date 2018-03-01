@@ -17,9 +17,8 @@ function cacheSearch(search, cache) {
         const data = await cache.get(query)
         if (data != null) return data
 
-        const promise = search(query)
-
-        return await cache.set(query, promise)
+        const newData = await search(query)
+        return await cache.set(query, newData)
     }
 }
 
