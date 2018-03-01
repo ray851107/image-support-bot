@@ -11,9 +11,9 @@ const bot = new TelegramBot(config.bot.token, { polling: true })
 
 const search = cacheSearch(async query => {
     try {
-        return customSearch(query)
+        return await customSearch(query)
     } catch (err) {
-        return imageSearch(query)
+        return await imageSearch(query)
     }
 }, new NedbCache())
 
