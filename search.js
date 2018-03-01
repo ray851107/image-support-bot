@@ -21,4 +21,4 @@ function cacheSearch(search, cache) {
     }
 }
 
-module.exports = { resueSearch, cacheSearch }
+module.exports = { reuseSearch, cacheSearch }
