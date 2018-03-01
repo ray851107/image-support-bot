@@ -1,7 +1,7 @@
+const fetch = require('node-fetch')
 const htmlparser2 = require('htmlparser2')
 const https = require('https')
-const fetch = require('node-fetch')
-const querystring = require('querystring')
+const qs = require('qs')
 
 const config = require('./config')
 
@@ -19,7 +19,7 @@ async function customSearch(query) {
         ...config.params
     }
 
-    const res = await fetch(endpoint + '?' + querystring.stringify(params))
+    const res = await fetch(endpoint + '?' + qs.stringify(params))
     const data = await res.json()
 
     return data.items[0].link
@@ -34,15 +34,15 @@ async function imageSearch(query) {
         num: 1
     }
 
+    const headers = {
+        'User-Agent':
+            'Mozilla/5.0 (X11; Linux x86_64; rv:10.0) Gecko/20100101 Firefox/10.0',
+        DNT: '1'
+    }
+
     const res = await fetch(
-        `https://www.google.com/search?${querystring.stringify(params)}`,
-        {
-            headers: {
-                ['User-Agent']:
-                    'Mozilla/5.0 (X11; Linux x86_64; rv:10.0) Gecko/20100101 Firefox/10.0',
-                DNT: '1'
-            }
-        }
+        `https://www.google.com/search?${qs.stringify(params)}`,
+        { headers }
     )
 
     const data = await parseImageSearch(res.body)
@@ -58,11 +58,8 @@ function parseImageSearch(stream) {
 
         const parser = new htmlparser2.WritableStream({
             onopentag(name, attributes) {
-                if (
-                    !found &&
-                    attributes.class &&
-                    attributes.class.split(' ').includes('rg_meta')
-                ) {
+                const className = attributes.class
+                if (!found && className != null && /(^|\s)rg_meta($|\s)/.test(className)) {
                     parsing = true
                 }
             },
@@ -71,13 +68,18 @@ function parseImageSearch(stream) {
             },
             onclosetag() {
                 if (!parsing) return
+
                 found = true
                 parsing = false
 
                 stream.destroy()
                 parser.destroy()
 
-                resolve(JSON.parse(result))
+                try {
+                    resolve(JSON.parse(result))
+                } catch (err) {
+                    reject(err)
+                }
             },
             onend() {
                 if (!found) reject(new Error('link not found'))

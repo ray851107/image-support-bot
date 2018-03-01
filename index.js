@@ -24,7 +24,7 @@ bot.on('text', async ({ chat, text }) => {
     try {
         await Promise.all(
             queries.map(async query => {
-                const link = await search.doSearch(query)
+                const link = await search(query)
                 if (query.endsWith('.gif')) {
                     await bot.sendDocument(chat.id, link)
                 } else {
