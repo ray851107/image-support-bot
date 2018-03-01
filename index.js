@@ -2,20 +2,22 @@ const TelegramBot = require('node-telegram-bot-api')
 const isUrl = require('is-url')
 
 const { customSearch, imageSearch } = require('./google')
-const { cacheSearch } = require('./cache-search')
+const { reuseSearch, cacheSearch } = require('./search')
 const { NedbCache } = require('./store')
 
 const config = require('./config.json')
 
 const bot = new TelegramBot(config.bot.token, { polling: true })
 
-const search = cacheSearch(async query => {
-    try {
-        return await customSearch(query)
-    } catch (err) {
-        return await imageSearch(query)
-    }
-}, new NedbCache())
+const search = reuseSearch(
+    cacheSearch(async query => {
+        try {
+            return await customSearch(query)
+        } catch (err) {
+            return await imageSearch(query)
+        }
+    }, new NedbCache())
+)
 
 const parse = text => text.match(/\S+\.(jpg|png|bmp|gif)/gi) || []
 
