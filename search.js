@@ -1,12 +1,14 @@
 function reuseSearch(search) {
     const running = new Map()
-    return query => {
+    return async query => {
         if (running.has(query)) return running.get(query)
         const promise = search(query)
         running.set(query, promise)
-        promise.finally(() => {
+        try {
+            await promise
+        } finally {
             running.delete(query)
-        })
+        }
     }
 }
 
