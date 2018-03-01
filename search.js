@@ -5,7 +5,7 @@ function reuseSearch(search) {
         const promise = search(query)
         running.set(query, promise)
         try {
-            await promise
+            return await promise
         } finally {
             running.delete(query)
         }
