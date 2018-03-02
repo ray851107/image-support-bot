@@ -3,7 +3,7 @@ const htmlparser2 = require('htmlparser2')
 const https = require('https')
 const qs = require('querystring')
 
-const config = require('./config')
+const config = require('./config.json')
 
 async function customSearch(query) {
     const params = {
