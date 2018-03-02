@@ -1,4 +1,4 @@
-const TelegramBot = require('node-telegram-bot-api')
+const Telegraf = require('telegraf')
 const isUrl = require('is-url')
 
 const { customSearch, imageSearch } = require('./google')
@@ -6,8 +6,6 @@ const { reuseSearch, cacheSearch } = require('./search')
 const { NedbCache } = require('./store')
 
 const config = require('./config.json')
-
-const bot = new TelegramBot(config.bot.token, { polling: true })
 
 const search = reuseSearch(
     cacheSearch(async query => {
@@ -21,15 +19,27 @@ const search = reuseSearch(
 
 const parse = text => text.match(/\S+\.(jpg|png|bmp|gif)/gi) || []
 
-bot.on('text', ({ chat, text }) => {
+const bot = new Telegraf(config.bot.token)
+
+bot.on('text', ({message, telegram}) => {
+    const {text, chat} = messsage
     const queries = parse(text).filter(match => !isUrl(match))
-    for (const query of queries) {
-        search(query)
-            .then(link => {
-                query.endsWith('.gif')
-                    ? bot.sendDocument(chat.id, link)
-                    : bot.sendPhoto(chat.id, link)
-            })
-            .catch(console.log)
-    }
+
+    queries.forEach(async query => {
+        try {
+            const link = await search(query)
+            if (query.endsWith('.gif')) {
+                await telegram.sendDocument(chat.id, link)
+            } else {
+                await telegram.sendPhoto(chat.id, link)
+            }
+        } catch(err) {
+            console.error(err)
+        }
+    })
 })
+
+bot.catch(console.error)
+
+bot.startPolling()
+
