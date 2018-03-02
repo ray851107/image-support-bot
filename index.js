@@ -22,7 +22,7 @@ const parse = text => text.match(/\S+\.(jpg|png|bmp|gif)/gi) || []
 const bot = new Telegraf(config.bot.token)
 
 bot.on('text', ({message, telegram}) => {
-    const {text, chat} = messsage
+    const {text, chat} = message
     const queries = parse(text).filter(match => !isUrl(match))
 
     queries.forEach(async query => {
