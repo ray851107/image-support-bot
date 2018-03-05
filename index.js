@@ -21,8 +21,8 @@ const parse = text => text.match(/\S+\.(jpg|png|bmp|gif)/gi) || []
 
 const bot = new Telegraf(config.bot.token)
 
-bot.on('text', ({message, telegram}) => {
-    const {text, chat} = message
+bot.on('text', ({ message, telegram }) => {
+    const { text, chat } = message
     const queries = parse(text).filter(match => !isUrl(match))
 
     queries.forEach(async query => {
@@ -33,7 +33,7 @@ bot.on('text', ({message, telegram}) => {
             } else {
                 await telegram.sendPhoto(chat.id, link)
             }
-        } catch(err) {
+        } catch (err) {
             console.error(err)
         }
     })
@@ -42,4 +42,3 @@ bot.on('text', ({message, telegram}) => {
 bot.catch(console.error)
 
 bot.startPolling()
-

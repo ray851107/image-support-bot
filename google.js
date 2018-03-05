@@ -58,12 +58,9 @@ function parseImageSearch(stream) {
 
         const parser = new htmlparser2.WritableStream({
             onopentag(name, attributes) {
+                if (found) return
                 const className = attributes.class
-                if (
-                    !found &&
-                    className != null &&
-                    /(^|\s)rg_meta($|\s)/.test(className)
-                ) {
+                if (className && /(^|\s)rg_meta($|\s)/.test(className)) {
                     parsing = true
                 }
             },
