@@ -14,11 +14,12 @@ function reuseSearch(search) {
 
 function cacheSearch(search, cache) {
     return async query => {
-        const data = await cache.get(query)
+        const data = cache.get(query)
         if (data != null) return data
 
         const newData = await search(query)
-        return await cache.set(query, newData)
+        cache.set(query, newData)
+        return newData
     }
 }
 

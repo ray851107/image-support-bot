@@ -3,9 +3,11 @@ const isUrl = require('is-url')
 
 const { customSearch, imageSearch } = require('./google')
 const { reuseSearch, cacheSearch } = require('./search')
-const { NedbCache } = require('./store')
+const { LokiCache } = require('./loki-cache')
 
 const config = require('./config.json')
+
+const cache = new LokiCache('./loki-cache.db')
 
 const search = reuseSearch(
     cacheSearch(async query => {
@@ -14,7 +16,7 @@ const search = reuseSearch(
         } catch (err) {
             return await imageSearch(query)
         }
-    }, new NedbCache())
+    }, cache)
 )
 
 const parse = text => text.match(/\S+\.(jpg|png|bmp|gif)/gi) || []
@@ -41,4 +43,13 @@ bot.on('text', ({ message, telegram }) => {
 
 bot.catch(console.error)
 
-bot.startPolling()
+async function main() {
+    try {
+        await cache.load()
+        bot.startPolling()
+    } catch (err) {
+        console.error(err)
+    }
+}
+
+main()

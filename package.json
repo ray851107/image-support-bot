@@ -12,7 +12,7 @@
   "dependencies": {
     "htmlparser2": "^3.9.2",
     "is-url": "^1.2.2",
-    "nedb-promise": "^2.0.1",
+    "lokijs": "^1.5.3",
     "node-fetch": "^2.0.0",
     "telegraf": "^3.19.0"
   }
