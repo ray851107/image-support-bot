@@ -21,7 +21,7 @@ class LokiCache {
     }
 
     set(query, data) {
-        this.db.insert({ query, data })
+        this.entries.insert({ query, data })
     }
 }
 
