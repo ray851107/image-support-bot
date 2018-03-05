@@ -17,7 +17,8 @@ class LokiCache {
     }
 
     get(query) {
-        return this.entries.by('query', query).data
+        const doc = this.entries.by('query', query)
+        return doc != null ? doc.data : null
     }
 
     set(query, data) {
