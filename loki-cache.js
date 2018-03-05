@@ -17,7 +17,7 @@ class LokiCache {
     }
 
     get(query) {
-        return this.entries.by('query', query)
+        return this.entries.by('query', query).data
     }
 
     set(query, data) {
