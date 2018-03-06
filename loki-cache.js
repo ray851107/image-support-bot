@@ -1,8 +1,11 @@
 const Loki = require('lokijs')
 
+const MILLIS_PER_DAY = 24 * 60 * 60 * 1000
+
 class LokiCache {
-    constructor(filename, ttl = 24 * 60 * 60 * 1000) {
+    constructor(filename, ttl = MILLIS_PER_DAY) {
         this.db = new Loki(filename, { autosave: true, autosaveInterval: 5000 })
+        this.ttl = ttl
         this.entries = null
     }
 
@@ -16,8 +19,8 @@ class LokiCache {
         if (this.entries == null) {
             this.entries = this.db.addCollection('entries', {
                 unique: ['query'],
-                ttl: ttl,
-                ttlInterval: 24 * 60 * 60 * 1000
+                ttl: this.ttl,
+                ttlInterval: MILLIS_PER_DAY
             })
         }
     }
