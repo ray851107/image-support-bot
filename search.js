@@ -23,4 +23,14 @@ function cacheSearch(search, cache) {
     }
 }
 
-module.exports = { reuseSearch, cacheSearch }
+function chainSearch(search, fallbackSearch) {
+    return async query => {
+        try {
+            return await search(query)
+        } catch (err) {
+            return await fallbackSearch(query)
+        }
+    }
+}
+
+module.exports = { reuseSearch, cacheSearch, chainSearch }

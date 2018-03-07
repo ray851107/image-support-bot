@@ -10,13 +10,7 @@ const config = require('./config.json')
 const cache = new LokiCache('./loki-cache.db')
 
 const search = reuseSearch(
-    cacheSearch(async query => {
-        try {
-            return await customSearch(query)
-        } catch (err) {
-            return await imageSearch(query)
-        }
-    }, cache)
+    cacheSearch(chainSearch(customSearch, imageSearch), cache)
 )
 
 const parse = text => text.match(/\S+\.(jpg|png|bmp|gif)/gi) || []
