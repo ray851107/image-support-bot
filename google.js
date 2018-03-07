@@ -5,16 +5,19 @@ const qs = require('querystring')
 const config = require('./config.json')
 
 async function customSearch(query) {
+    const endpoint = 'https://www.googleapis.com/customsearch/v1'
+
     const params = {
         q: query,
         fileType: query.endsWith('.gif') ? 'gif' : undefined,
 
+        hl: 'zh-TW',
+        num: 1,
+        searchType: 'image',
+
         key: config.cse.key,
         cx: config.cse.cx,
 
-        searchType: 'image',
-        hl: 'zh-TW',
-        num: 1,
         ...config.params
     }
 
