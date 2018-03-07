@@ -1,6 +1,5 @@
 const fetch = require('node-fetch')
 const htmlparser2 = require('htmlparser2')
-const https = require('https')
 const qs = require('querystring')
 
 const config = require('./config.json')
