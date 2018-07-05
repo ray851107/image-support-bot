@@ -2,7 +2,7 @@
 A Telegram bot which does google image search for your group.
 
 ## Screenshot
-![screenshot](http://i.imgur.com/Mse6MsC.jpg)
+<img src="http://i.imgur.com/Mse6MsC.jpg" width="400" alt="screenshot" />
 
 ## Guide
 1. Create a Telegram bot and set privacy mode to **False**.
