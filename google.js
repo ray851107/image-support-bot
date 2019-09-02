@@ -5,6 +5,10 @@ const qs = require('querystring')
 const config = require('./config.json')
 
 async function customSearch(query) {
+    if (config.cse == null) {
+        throw "Google API key is not configured correctly."
+    }
+
     const endpoint = 'https://www.googleapis.com/customsearch/v1'
 
     const params = {
