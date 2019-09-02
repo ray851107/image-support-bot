@@ -2,16 +2,16 @@ const Telegraf = require('telegraf')
 const isUrl = require('is-url')
 
 const { customSearch, imageSearch } = require('./google')
-const { reuseSearch, cacheSearch } = require('./search')
-const { LokiCache } = require('./loki-cache')
 
 const config = require('./config.json')
 
-const cache = new LokiCache('./loki-cache.db')
-
-const search = reuseSearch(
-    cacheSearch(chainSearch(customSearch, imageSearch), cache)
-)
+async function search(query) {
+    try {
+        return await customSearch(query)
+    } catch(e) {
+        return await imageSearch(query)
+    }
+}
 
 const parse = text => text.match(/\S+\.(jpg|png|bmp|gif)/gi) || []
 
@@ -39,7 +39,6 @@ bot.catch(console.error)
 
 async function main() {
     try {
-        await cache.load()
         bot.startPolling()
     } catch (err) {
         console.error(err)
