@@ -10,9 +10,12 @@
   "author": "ray851107",
   "license": "MIT",
   "dependencies": {
+    "domhandler": "^3.0.0",
+    "domutils": "^2.0.0",
     "htmlparser2": "^3.9.2",
     "is-url": "^1.2.2",
     "node-fetch": "^2.0.0",
     "telegraf": "^3.19.0"
-  }
+  },
+  "devDependencies": {}
 }
