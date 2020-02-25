@@ -82,18 +82,12 @@ function parseHtml(stream) {
 }
 
 function getUrlFromAnchor(dom) {
-  const images = domutils.findOne(
-    e => domutils.getAttributeValue(e, 'id') === 'images',
-    dom
-  )
-  if (images == null) return null
-
-  const anchor = firstChild(images)
+  const anchor = domutils.findOne(e => {
+    const href = domutils.getAttributeValue(e, 'href')
+    return href != null && href.startsWith('/imgres?')
+  }, dom)
   if (anchor == null) return null
-
   const href = domutils.getAttributeValue(anchor, 'href')
-  if (href == null) return null
-
   return parseUrl(href, true).query.imgurl
 }
 
