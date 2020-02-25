@@ -3,6 +3,7 @@ const htmlparser2 = require('htmlparser2')
 const domhandler = require('domhandler')
 const domutils = require('domutils')
 const qs = require('querystring')
+const parseUrl = require('url').parse
 
 const config = require('./config.json')
 
@@ -44,8 +45,7 @@ async function imageSearch(query) {
 
   const headers = {
     'User-Agent':
-      'Mozilla/5.0 (X11; Linux x86_64; rv:10.0) Gecko/20100101 Firefox/10.0',
-    DNT: '1'
+      'Opera/9.80 (J2ME/MIDP; Opera Mini/9.80 (S60; SymbOS; Opera Mobi/23.348; U; en) Presto/2.5.25 Version/10.54'
   }
 
   const res = await fetch(
@@ -55,7 +55,8 @@ async function imageSearch(query) {
 
   const dom = await parseHtml(res.body)
 
-  const url = getUrlFromScript(dom) || getUrlFromRgMeta(dom)
+  const url =
+    getUrlFromAnchor(dom) || getUrlFromScript(dom) || getUrlFromRgMeta(dom)
 
   if (url == null) {
     throw new Error('image url not found')
@@ -73,9 +74,31 @@ function parseHtml(stream) {
         resolve(dom)
       }
     })
-    const parser = new htmlparser2.WritableStream(handler)
+    const parser = new htmlparser2.WritableStream(handler, {
+      decodeEntities: true
+    })
     stream.pipe(parser)
   })
+}
+
+function getUrlFromAnchor(dom) {
+  const images = domutils.findOne(
+    e => domutils.getAttributeValue(e, 'id') === 'images',
+    dom
+  )
+  if (images == null) return null
+
+  const anchor = firstChild(images)
+  if (anchor == null) return null
+
+  const href = domutils.getAttributeValue(anchor, 'href')
+  if (href == null) return null
+
+  return parseUrl(href, true).query.imgurl
+}
+
+function firstChild(e) {
+  return e.children && e.children[0]
 }
 
 function getUrlFromScript(dom) {
