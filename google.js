@@ -1,16 +1,16 @@
-const fetch = require('node-fetch')
-const qs = require('querystring')
-const url = require('url')
-const entities = require('entities')
+const fetch = require('node-fetch');
+const qs = require('querystring');
+const url = require('url');
+const entities = require('entities');
 
-const config = require('./config.json')
+const config = require('./config.json');
 
 async function customSearch(query) {
   if (config.cse == null) {
-    throw 'Google API key is not configured correctly.'
+    throw 'Google API key is not configured correctly.';
   }
 
-  const endpoint = 'https://www.googleapis.com/customsearch/v1'
+  const endpoint = 'https://www.googleapis.com/customsearch/v1';
 
   const params = {
     q: query,
@@ -24,12 +24,12 @@ async function customSearch(query) {
     cx: config.cse.cx,
 
     ...config.params
-  }
+  };
 
-  const res = await fetch(endpoint + '?' + qs.stringify(params))
-  const data = await res.json()
+  const res = await fetch(endpoint + '?' + qs.stringify(params));
+  const data = await res.json();
 
-  return data.items[0].link
+  return data.items[0].link;
 }
 
 async function imageSearch(query) {
@@ -39,31 +39,31 @@ async function imageSearch(query) {
     tbm: 'isch',
     hl: 'zh-TW',
     num: 1
-  }
+  };
 
   const headers = {
     'User-Agent':
       'Opera/9.80 (J2ME/MIDP; Opera Mini/9.80 (S60; SymbOS; Opera Mobi/23.348; U; en) Presto/2.5.25 Version/10.54'
-  }
+  };
 
   const res = await fetch(
     `https://www.google.com/search?${qs.stringify(params)}`,
     { headers }
-  )
+  );
 
-  const html = await res.text()
-  const imageUrl = extractImageUrl(html)
+  const html = await res.text();
+  const imageUrl = extractImageUrl(html);
   if (imageUrl == null) {
-    throw new Error('image url not found')
+    throw new Error('image url not found');
   }
-  return imageUrl
+  return imageUrl;
 }
 
 function extractImageUrl(text) {
-  const match = text.match(/ href="(\/imgres\?[^"]*)"/)
-  if (match == null) return null
-  const href = entities.decodeHTML(match[1])
-  return url.parse(href, true).query.imgurl
+  const match = text.match(/ href="(\/imgres\?[^"]*)"/);
+  if (match == null) return null;
+  const href = entities.decodeHTML(match[1]);
+  return url.parse(href, true).query.imgurl;
 }
 
-module.exports = { customSearch, imageSearch }
+module.exports = { customSearch, imageSearch };
