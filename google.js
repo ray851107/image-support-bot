@@ -1,9 +1,7 @@
 const fetch = require('node-fetch')
-const htmlparser2 = require('htmlparser2')
-const domhandler = require('domhandler')
-const domutils = require('domutils')
 const qs = require('querystring')
-const parseUrl = require('url').parse
+const url = require('url')
+const entities = require('entities')
 
 const config = require('./config.json')
 
@@ -53,87 +51,19 @@ async function imageSearch(query) {
     { headers }
   )
 
-  const dom = await parseHtml(res.body)
-
-  const url =
-    getUrlFromAnchor(dom) || getUrlFromScript(dom) || getUrlFromRgMeta(dom)
-
-  if (url == null) {
+  const html = await res.text()
+  const imageUrl = extractImageUrl(html)
+  if (imageUrl == null) {
     throw new Error('image url not found')
   }
-
-  return url
+  return imageUrl
 }
 
-function parseHtml(stream) {
-  return new Promise((resolve, reject) => {
-    const handler = new domhandler.DomHandler((err, dom) => {
-      if (err) {
-        reject(err)
-      } else {
-        resolve(dom)
-      }
-    })
-    const parser = new htmlparser2.WritableStream(handler, {
-      decodeEntities: true
-    })
-    stream.pipe(parser)
-  })
-}
-
-function getUrlFromAnchor(dom) {
-  const anchor = domutils.findOne(e => {
-    const href = domutils.getAttributeValue(e, 'href')
-    return href != null && href.startsWith('/imgres?')
-  }, dom)
-  if (anchor == null) return null
-  const href = domutils.getAttributeValue(anchor, 'href')
-  return parseUrl(href, true).query.imgurl
-}
-
-function firstChild(e) {
-  return e.children && e.children[0]
-}
-
-function getUrlFromScript(dom) {
-  const scripts = domutils
-    .findAll(e => e.name === 'script', dom)
-    .map(elem => domutils.getText(elem))
-  const prefix =
-    "AF_initDataCallback({key: 'ds:2', isError:  false , hash: '3', data:function(){return "
-  const suffix = '}});'
-  for (const script of scripts) {
-    if (script.startsWith(prefix) && script.endsWith(suffix)) {
-      const json = script.substring(
-        prefix.length,
-        script.length - suffix.length
-      )
-      const data = JSON.parse(json)
-      const url = get(data, [31, 0, 12, 2, 0, 1, 3, 0])
-      return typeof url === 'string' ? url : null
-    }
-  }
-}
-
-function getUrlFromRgMeta(dom) {
-  const elem = domutils.findOne(e => {
-    const className = domutils.getAttributeValue(e, 'class')
-    return /(^|\s)rg_meta($|\s)/.test(className)
-  }, dom)
-  if (elem != null) {
-    const json = domutils.getText(elem)
-    return JSON.parse(json).ou
-  } else {
-    return null
-  }
-}
-
-function get(data, path) {
-  for (let i = 0, len = path.length; i < len; ++i) {
-    if (data == null) break
-    data = data[path[i]]
-  }
-  return data
+function extractImageUrl(text) {
+  const match = text.match(/ href="(\/imgres\?[^"]*)"/)
+  if (match == null) return null
+  const href = entities.decodeHTML(match[1])
+  return url.parse(href, true).query.imgurl
 }
 
 module.exports = { customSearch, imageSearch }
