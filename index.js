@@ -13,13 +13,14 @@ async function search(query) {
   }
 }
 
-const parse = text => text.match(/\S+\.(jpg|png|bmp|gif)/gi) || [];
-
 const bot = new Telegraf(config.bot.token);
 
 bot.on('text', ({ message, telegram }) => {
   const { text, chat } = message;
-  const queries = parse(text).filter(match => !isUrl(match));
+  const queries = text
+    .split('\n')
+    .map(s => s.trim())
+    .filter(s => /(jpg|png|bmp|gif)$/.test(s) && !isUrl(s));
 
   queries.forEach(async query => {
     try {
