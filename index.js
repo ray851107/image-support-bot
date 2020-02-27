@@ -20,7 +20,7 @@ bot.on('text', ({ message, telegram }) => {
   const queries = text
     .split('\n')
     .map(s => s.trim())
-    .filter(s => /(jpg|png|bmp|gif)$/.test(s) && !isUrl(s));
+    .filter(s => /\.(jpg|png|bmp|gif)$/.test(s) && !isUrl(s));
 
   queries.forEach(async query => {
     try {
