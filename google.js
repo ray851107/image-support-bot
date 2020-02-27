@@ -52,16 +52,14 @@ async function imageSearch(query) {
   );
 
   const html = await res.text();
-  const imageUrl = extractImageUrl(html);
-  if (imageUrl == null) {
-    throw new Error('image url not found');
-  }
-  return imageUrl;
+  return extractImageUrl(html);
 }
 
 function extractImageUrl(text) {
   const match = text.match(/ href="(\/imgres\?[^"]*)"/);
-  if (match == null) return null;
+  if (match == null) {
+    throw new Error('image url not found');
+  }
   const href = entities.decodeHTML(match[1]);
   return url.parse(href, true).query.imgurl;
 }
