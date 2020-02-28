@@ -1,6 +1,5 @@
 const fetch = require('node-fetch');
 const qs = require('querystring');
-const url = require('url');
 const entities = require('entities');
 
 const config = require('./config.json');
@@ -56,12 +55,12 @@ async function imageSearch(query) {
 }
 
 function extractImageUrl(text) {
-  const match = text.match(/ href="(\/imgres\?[^"]*)"/);
+  const match = text.match(/ href="\/imgres\?(.*?)"/);
   if (match == null) {
     throw new Error('image url not found');
   }
-  const href = entities.decodeHTML(match[1]);
-  return url.parse(href, true).query.imgurl;
+  const query = entities.decodeHTML(match[1]);
+  return qs.parse(query).imgurl;
 }
 
 module.exports = { customSearch, imageSearch };
