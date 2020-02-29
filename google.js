@@ -44,7 +44,7 @@ async function imageSearch(query) {
 
   const headers = {
     'User-Agent':
-      'Opera/9.80 (J2ME/MIDP; Opera Mini/9.80 (S60; SymbOS; Opera Mobi/23.348; U; en) Presto/2.5.25 Version/10.54'
+      'Opera/9.80 (J2ME/MIDP; Opera Mini/9.80 (J2ME/23.377; U; en) Presto/2.5.25 Version/10.54'
   };
 
   const res = await fetch(endpoint + '?' + qs.stringify(params), { headers });
