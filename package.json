@@ -1,7 +1,8 @@
 {
   "name": "image-support-bot",
   "version": "1.0.0",
-  "description": "A Telegram bot which does google image search for your group.",
+  "description": "",
+  "private": true,
   "main": "index.js",
   "scripts": {
     "start": "node .",
