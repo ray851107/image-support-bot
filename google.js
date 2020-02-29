@@ -32,6 +32,8 @@ async function customSearch(query) {
 }
 
 async function imageSearch(query) {
+  const endpoint = 'https://www.google.com/search';
+
   const params = {
     q: query,
     tbs: query.endsWith('.gif') ? 'ift:gif' : undefined,
@@ -45,11 +47,7 @@ async function imageSearch(query) {
       'Opera/9.80 (J2ME/MIDP; Opera Mini/9.80 (S60; SymbOS; Opera Mobi/23.348; U; en) Presto/2.5.25 Version/10.54'
   };
 
-  const res = await fetch(
-    `https://www.google.com/search?${qs.stringify(params)}`,
-    { headers }
-  );
-
+  const res = await fetch(endpoint + '?' + qs.stringify(params), { headers });
   const html = await res.text();
   return extractImageUrl(html);
 }
