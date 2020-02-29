@@ -13,6 +13,10 @@ async function search(query) {
   }
 }
 
+function isImage(text) {
+  return /\.(jpg|png|bmp|gif)$/.test(text);
+}
+
 const bot = new Telegraf(config.bot.token);
 
 bot.on('text', ({ message, telegram }) => {
@@ -20,8 +24,7 @@ bot.on('text', ({ message, telegram }) => {
   const queries = text
     .split('\n')
     .map(s => s.trim())
-    .filter(s => /\.(jpg|png|bmp|gif)$/.test(s) && !isUrl(s));
-
+    .filter(s => isImage(s) && !isUrl(s));
   queries.forEach(async query => {
     try {
       const link = await search(query);
