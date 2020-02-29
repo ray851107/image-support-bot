@@ -27,7 +27,6 @@ async function customSearch(query) {
 
   const res = await fetch(endpoint + '?' + qs.stringify(params));
   const data = await res.json();
-
   return data.items[0].link;
 }
 
