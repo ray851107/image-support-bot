@@ -43,7 +43,9 @@ bot.catch(console.error);
 
 async function main() {
   try {
-    bot.startPolling();
+    await bot.launch({
+      polling: { timeout: 3 }
+    });
   } catch (err) {
     console.error(err);
   }
