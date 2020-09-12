@@ -13,7 +13,7 @@
   "dependencies": {
     "entities": "^2.0.0",
     "is-url": "^1.2.2",
-    "node-fetch": "^2.0.0",
+    "node-fetch": "^2.6.1",
     "telegraf": "^3.19.0"
   },
   "devDependencies": {}
